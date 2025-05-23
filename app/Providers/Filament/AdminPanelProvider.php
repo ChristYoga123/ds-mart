@@ -37,7 +37,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
             ->brandName('Admin DS Mart')
             ->colors([
                 'primary' => Color::Amber,
