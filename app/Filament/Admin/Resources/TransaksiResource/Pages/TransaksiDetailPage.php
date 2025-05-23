@@ -39,7 +39,12 @@ class TransaksiDetailPage extends Page implements HasTable
             ->columns([
                 TextColumn::make('produk.nama')
                     ->searchable(),
-                TextColumn::make('produk.harga_jual_per_pcs')
+                TextColumn::make('harga_jual_per_pcs')
+                    ->label('Harga Jual Saat Transaksi')
+                    ->money('idr')
+                    ->weight(FontWeight::Bold),
+                TextColumn::make('harga_kulakan_per_pcs')
+                    ->label('Harga Kulakan Saat Transaksi')
                     ->money('idr')
                     ->weight(FontWeight::Bold),
                 TextColumn::make('jumlah'),

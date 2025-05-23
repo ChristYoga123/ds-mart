@@ -66,6 +66,7 @@ class ProdukResource extends Resource
                     ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('barcode')
+                    ->label('Barcode (Opsional)')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
