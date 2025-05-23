@@ -1,0 +1,26 @@
+{
+    "name": "DS Mart",
+    "short_name": "DS Mart",
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "description": "DS Mart Progressive Web App",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "icons/favicon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/favicon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/favicon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+} 
