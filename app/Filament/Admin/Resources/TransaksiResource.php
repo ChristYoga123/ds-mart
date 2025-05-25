@@ -9,8 +9,12 @@ use Filament\Forms\Form;
 use App\Models\Transaksi;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\Admin\TransaksiExport;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,10 +70,11 @@ class TransaksiResource extends Resource
     {
         return $table
             ->headerActions([
-                ExportAction::make()
-                    ->exporter(TransaksiExporter::class)
-                    ->color('success')
+                Action::make('export')
+                    ->label('Export')
                     ->icon('heroicon-o-cloud-arrow-up')
+                    ->action(fn() => Excel::download(new TransaksiExport(), 'transaksi' . now()->format('Y-m-d') . '.xlsx'))
+                    ->color('success')
             ])
             ->query(Transaksi::query()->orderBy('created_at', 'desc'))
             ->columns([
