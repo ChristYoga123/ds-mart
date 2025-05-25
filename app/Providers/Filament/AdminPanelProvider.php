@@ -122,7 +122,6 @@ class AdminPanelProvider extends PanelProvider
                                 ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.logs')),
                         ]),
                 ]);
-            })
-            ->spa();
+            });
     }
 }
