@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TransaksiResource\Widgets;
+namespace App\Filament\Admin\Widgets;
 
+use Carbon\Carbon;
 use App\Models\Transaksi;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Carbon\Carbon;
 
-class TransaksiStatsOverview extends BaseWidget
+class TransaksiStatsWidget extends BaseWidget
 {
-    protected static ?int $sort = 1;
     protected function getStats(): array
     {
         $today = Carbon::today();
@@ -52,4 +51,4 @@ class TransaksiStatsOverview extends BaseWidget
                 ->color('success'),
         ];
     }
-} 
+}

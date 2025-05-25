@@ -21,6 +21,7 @@ use App\Filament\Admin\Resources\TransaksiResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use FilipFonal\FilamentLogManager\FilamentLogManager;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use App\Filament\Admin\Resources\ProdukMutasiResource;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -51,8 +52,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -92,6 +93,7 @@ class AdminPanelProvider extends PanelProvider
                         ->items([
                             ...Dashboard::getNavigationItems(),
                             ...AkunResource::getNavigationItems(),
+                            ...ProdukMutasiResource::getNavigationItems(),
                             ...TransaksiResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Settings')
