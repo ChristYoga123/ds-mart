@@ -12,7 +12,9 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Exports\TransaksiExporter;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -63,6 +65,12 @@ class TransaksiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(TransaksiExporter::class)
+                    ->color('success')
+                    ->icon('heroicon-o-cloud-arrow-up')
+            ])
             ->query(Transaksi::query()->orderBy('created_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('kode_transaksi')
