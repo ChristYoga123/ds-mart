@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Kasir;
 
 use App\Models\Produk;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use App\Models\UserLog;
 use App\Models\Transaksi;
-use App\Models\TransaksiDetail;
 use App\Models\ProdukMutasi;
+use Illuminate\Http\Request;
+use App\Models\TransaksiDetail;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class CashierController extends Controller
 {
@@ -94,8 +95,13 @@ class CashierController extends Controller
 
                     $totalHargaKulakan += ($batch->harga_beli_per_pcs * $qtyDiambil);
                     $sisaQty -= $qtyDiambil;
-                }
 
+                    UserLog::create([
+                        'user_id' => auth()->user()->id,
+                        'log' => 'Membuat penjualan untuk produk ' . $produk->nama . ' dengan kode batch ' . $batch->kode_batch . ' sebanyak ' . $qtyDiambil . ' pcs'
+                    ]);
+                }
+                
                 // Jika masih ada sisa quantity yang belum terpenuhi
                 if ($sisaQty > 0) {
                     throw new \Exception("Stok {$produk->nama} tidak mencukupi");
