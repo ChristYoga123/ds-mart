@@ -16,6 +16,7 @@ use Filament\Navigation\NavigationBuilder;
 use App\Filament\Admin\Resources\AkunResource;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use App\Filament\Admin\Resources\UserLogResource;
 use Filament\Http\Middleware\AuthenticateSession;
 use App\Filament\Admin\Resources\TransaksiResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -95,6 +96,7 @@ class AdminPanelProvider extends PanelProvider
                             ...AkunResource::getNavigationItems(),
                             ...ProdukMutasiResource::getNavigationItems(),
                             ...TransaksiResource::getNavigationItems(),
+                            ...UserLogResource::getNavigationItems(),
                         ]),
                     NavigationGroup::make('Settings')
                         ->items([

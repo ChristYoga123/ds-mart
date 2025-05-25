@@ -2,9 +2,10 @@
 
 namespace App\Filament\Gudang\Resources\ProdukResource\Pages;
 
-use App\Filament\Gudang\Resources\ProdukResource;
 use Filament\Actions;
+use App\Models\UserLog;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Gudang\Resources\ProdukResource;
 
 class ManageProduks extends ManageRecords
 {
@@ -14,7 +15,13 @@ class ManageProduks extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->closeModalByClickingAway(false),
+                ->closeModalByClickingAway(false)
+                ->after(function ($record) {
+                    UserLog::create([
+                        'user_id' => auth()->user()->id,
+                        'log' => 'Membuat produk: ' . $record->nama
+                    ]);
+                }),
         ];
     }
 }

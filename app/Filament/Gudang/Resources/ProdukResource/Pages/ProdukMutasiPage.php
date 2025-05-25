@@ -2,6 +2,7 @@
 
 namespace App\Filament\Gudang\Resources\ProdukResource\Pages;
 
+use App\Models\UserLog;
 use Filament\Tables\Table;
 use App\Models\ProdukBatch;
 use App\Models\ProdukMutasi;
@@ -46,7 +47,7 @@ class ProdukMutasiPage extends Page implements HasTable
                 ->form([
                     Select::make('produk_batch_id')
                         ->label('Kode Batch (Jika opsi tidak ada, klik tombol + untuk membuat batch baru)')
-                        ->relationship('produkBatch', 'kode_batch')
+                        ->relationship('produkBatch', 'kode_batch', fn($query) => $query->whereProdukId($this->record->id))
                         ->getOptionLabelFromRecordUsing(fn(ProdukBatch $record) => "[$record->kode_batch] " . $record->produk->nama . ' - Rp' . number_format($record->harga_beli_per_pcs, 0, ',', '.'))
                         ->required()
                         ->searchable()
@@ -87,6 +88,11 @@ class ProdukMutasiPage extends Page implements HasTable
                 ->after(function (ProdukMutasi $record) {
                     $record->produkBatch->update([
                         'stok_pcs_tersedia' => $record->jenis_mutasi == 'masuk' ? $record->produkBatch->stok_pcs_tersedia + $record->jumlah_mutasi : $record->produkBatch->stok_pcs_tersedia - $record->jumlah_mutasi
+                    ]);
+
+                    UserLog::create([
+                        'user_id' => auth()->user()->id,
+                        'log' => 'Membuat mutasi untuk produk ' . $record->produkBatch->produk->nama . ' dengan kode batch ' . $record->produkBatch->kode_batch . ' sebanyak ' . $record->jumlah_mutasi . ' pcs'
                     ]);
                 })
         ];

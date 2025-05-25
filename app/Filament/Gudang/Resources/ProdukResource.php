@@ -5,6 +5,7 @@ namespace App\Filament\Gudang\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Produk;
+use App\Models\UserLog;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -102,8 +103,20 @@ class ProdukResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->label('Lihat Batch'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->after(function (Produk $record) {
+                        UserLog::create([
+                            'user_id' => auth()->user()->id,
+                            'log' => 'Mengubah produk: ' . $record->nama
+                        ]);
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->after(function (Produk $record) {
+                        UserLog::create([
+                            'user_id' => auth()->user()->id,
+                            'log' => 'Menghapus produk: ' . $record->nama
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
