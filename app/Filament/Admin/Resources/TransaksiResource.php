@@ -11,12 +11,14 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use App\Filament\Admin\Resources\TransaksiResource\Pages;
 use App\Filament\Admin\Resources\TransaksiResource\RelationManagers;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use App\Filament\Admin\Resources\TransaksiResource\Widgets\TransaksiStatsOverview;
 
 class TransaksiResource extends Resource
@@ -82,8 +84,10 @@ class TransaksiResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
-            ])
+                DateRangeFilter::make('created_at')
+                    ->timezone('Asia/Jakarta')
+                    ->label('Tanggal Transaksi')
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\Action::make('detail')
                     ->label('Lihat Detail')
