@@ -110,6 +110,7 @@
         // Cart data
         let cartItems = [];
         let searchTimeout;
+        let currentTotal = 0; // Tambahkan variabel untuk menyimpan total mentah
 
         // Initialize DataTable
         $(document).ready(function() {
@@ -141,10 +142,10 @@
                         data: null,
                         className: 'px-6 py-4',
                         defaultContent: `<button class="add-to-cart bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-2 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-        </svg>
-    </button>`,
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+    </svg>
+</button>`,
                         orderable: false
                     }
                 ],
@@ -343,7 +344,11 @@
             const maxStok = parseInt($input.data('stok')) || item.stok;
 
             if (newQty > maxStok) {
-                toastr.warning(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                } else {
+                    alert(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                }
                 $input.val(maxStok);
                 item.quantity = maxStok;
             } else if (newQty > 0) {
@@ -371,7 +376,11 @@
             const maxStok = parseInt($input.data('stok')) || item.stok;
 
             if (newQty > maxStok) {
-                toastr.warning(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                } else {
+                    alert(`Stok ${item.name} hanya tersedia ${maxStok} pcs`);
+                }
                 $input.val(maxStok);
                 item.quantity = maxStok;
             } else if (newQty > 0) {
@@ -392,7 +401,11 @@
 
             if (existingItem) {
                 if (existingItem.quantity >= product.stok) {
-                    toastr.warning(`Stok ${product.nama} hanya tersedia ${product.stok} pcs`);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.warning(`Stok ${product.nama} hanya tersedia ${product.stok} pcs`);
+                    } else {
+                        alert(`Stok ${product.nama} hanya tersedia ${product.stok} pcs`);
+                    }
                     return;
                 }
                 existingItem.quantity += 1;
@@ -401,9 +414,9 @@
                 cartItems.push({
                     id: product.barcode,
                     name: product.nama,
-                    price: product.harga_jual_per_pcs,
+                    price: parseFloat(product.harga_jual_per_pcs), // Ensure numeric value
                     quantity: 1,
-                    subtotal: product.harga_jual_per_pcs,
+                    subtotal: parseFloat(product.harga_jual_per_pcs), // Ensure numeric value
                     stok: product.stok
                 });
             }
@@ -421,63 +434,63 @@
                 const $row = $('<tr>').addClass('border-b border-gray-100');
 
                 $row.html(`
-            <td class="px-3 py-2">
-                <div>
-                    <div class="font-medium">${item.name}</div>
-                    <div class="text-xs text-gray-500">${formatCurrency(item.price)}</div>
-                </div>
-            </td>
-            <td class="px-3 py-2 text-center">
-                <div class="flex items-center justify-center gap-2">
-                    <button type="button" class="decrease-qty text-gray-500 hover:text-red-500 cursor-pointer" data-id="${item.id}">
-                        <i class="fas fa-minus-circle"></i>
-                    </button>
-                    <input type="text" 
-                        class="qty-input w-12 text-center border border-gray-200 rounded-lg px-1 py-1 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:outline-none" 
-                        value="${item.quantity}" 
-                        data-id="${item.id}"
-                        data-price="${item.price}"
-                        data-stok="${item.stok}">
-                    <button type="button" class="increase-qty text-gray-500 hover:text-green-500 cursor-pointer" data-id="${item.id}">
-                        <i class="fas fa-plus-circle"></i>
-                    </button>
-                </div>
-            </td>
-            <td class="px-3 py-2 text-right font-medium">${formatCurrency(item.subtotal)}</td>
-            <td class="px-3 py-2 text-center">
-                <button class="remove-item text-red-500 hover:text-red-700 cursor-pointer" data-id="${item.id}">
-                    <i class="fas fa-trash-alt"></i>
+        <td class="px-3 py-2">
+            <div>
+                <div class="font-medium">${item.name}</div>
+                <div class="text-xs text-gray-500">${formatCurrency(item.price)}</div>
+            </div>
+        </td>
+        <td class="px-3 py-2 text-center">
+            <div class="flex items-center justify-center gap-2">
+                <button type="button" class="decrease-qty text-gray-500 hover:text-red-500 cursor-pointer" data-id="${item.id}">
+                    <i class="fas fa-minus-circle"></i>
                 </button>
-            </td>
-        `);
+                <input type="text" 
+                    class="qty-input w-12 text-center border border-gray-200 rounded-lg px-1 py-1 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:outline-none" 
+                    value="${item.quantity}" 
+                    data-id="${item.id}"
+                    data-price="${item.price}"
+                    data-stok="${item.stok}">
+                <button type="button" class="increase-qty text-gray-500 hover:text-green-500 cursor-pointer" data-id="${item.id}">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+            </div>
+        </td>
+        <td class="px-3 py-2 text-right font-medium">${formatCurrency(item.subtotal)}</td>
+        <td class="px-3 py-2 text-center">
+            <button class="remove-item text-red-500 hover:text-red-700 cursor-pointer" data-id="${item.id}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </td>
+    `);
 
                 $cartItemsContainer.append($row);
-                subtotal += item.subtotal;
+                subtotal += parseFloat(item.subtotal); // Ensure numeric addition
             });
 
             // If cart is empty, show message
             if (cartItems.length === 0) {
                 $cartItemsContainer.html(`
-            <tr>
-                <td colspan="4" class="px-3 py-4 text-center text-gray-500">
-                    Keranjang belanja kosong
-                </td>
-            </tr>
-        `);
+        <tr>
+            <td colspan="4" class="px-3 py-4 text-center text-gray-500">
+                Keranjang belanja kosong
+            </td>
+        </tr>
+    `);
             }
 
-            // Update totals
-            const total = subtotal;
-            $('#total').text(formatCurrency(total));
+            // Update totals - simpan nilai mentah ke variabel global
+            currentTotal = subtotal;
+            $('#total').text(formatCurrency(currentTotal));
 
             // Recalculate change if payment amount is filled
             calculateChange();
         }
 
-        // Calculate change
+        // Calculate change - gunakan variabel global currentTotal
         function calculateChange() {
             const paymentAmount = parseFloat($('#payment-amount').val()) || 0;
-            const total = parseFloat($('#total').text().replace('Rp ', '').replace(/\./g, '')) || 0;
+            const total = currentTotal; // Gunakan variabel global, bukan parsing dari text
 
             const change = paymentAmount - total;
             $('#change-amount').text(change >= 0 ? formatCurrency(change) : 'Rp 0');
@@ -494,6 +507,7 @@
         // Reset transaction
         function resetTransaction() {
             cartItems = [];
+            currentTotal = 0; // Reset total mentah
             $('#payment-amount').val('');
             updateCartDisplay();
 
@@ -521,15 +535,29 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        toastr.success(response.success);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.success);
+                        } else {
+                            alert(response.success);
+                        }
                         resetTransaction();
                     } else {
-                        toastr.error(response.error);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.error);
+                        } else {
+                            alert(response.error);
+                        }
                     }
                     $('#product-table').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
-                    toastr.error(xhr.responseJSON.error);
+                    const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error :
+                        'Terjadi kesalahan saat memproses pembayaran';
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMessage);
+                    } else {
+                        alert(errorMessage);
+                    }
                     $('#product-table').DataTable().ajax.reload();
                 }
             });
