@@ -21,7 +21,7 @@ class CashierController extends Controller
                 ->of($data)
                 ->addColumn('stok', function($row)
                 {
-                    return $row->produk_batches_sum_stok_pcs_tersedia;
+                    return $row->produk_batches_sum_stok_pcs_tersedia ?? 0;
                 })
                 ->addIndexColumn()
                 ->make(true);
