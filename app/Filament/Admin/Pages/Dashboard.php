@@ -25,8 +25,10 @@ class Dashboard extends PagesDashboard
         return [
             FilterAction::make()
                 ->form([
-                    DatePicker::make('startDate'),
-                    DatePicker::make('endDate'),
+                    DatePicker::make('startDate')
+                        ->label('Tanggal Awal'),
+                    DatePicker::make('endDate')
+                        ->label('Tanggal Akhir'),
                     // ...
                 ]),
         ];
