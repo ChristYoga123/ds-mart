@@ -26,9 +26,11 @@ class Dashboard extends PagesDashboard
             FilterAction::make()
                 ->form([
                     DatePicker::make('startDate')
-                        ->label('Tanggal Awal'),
+                        ->label('Tanggal Awal')
+                        ->default(now()->startOfMonth()),
                     DatePicker::make('endDate')
-                        ->label('Tanggal Akhir'),
+                        ->label('Tanggal Akhir')
+                        ->default(now()->endOfMonth()),
                     // ...
                 ]),
         ];
