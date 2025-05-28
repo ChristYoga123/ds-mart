@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\Custom\Dashboard as CustomDashboard;
+use App\Filament\Admin\Pages\Dashboard as PagesDashboard;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
@@ -48,14 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
-            ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -67,6 +62,8 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->pages([])
+            ->widgets([])
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
@@ -93,7 +90,7 @@ class AdminPanelProvider extends PanelProvider
                 return $builder->groups([
                     NavigationGroup::make('')
                         ->items([
-                            ...Dashboard::getNavigationItems(),
+                            ...PagesDashboard::getNavigationItems(),
                             ...AkunResource::getNavigationItems(),
                             ...ProdukMutasiResource::getNavigationItems(),
                             ...TransaksiResource::getNavigationItems(),
