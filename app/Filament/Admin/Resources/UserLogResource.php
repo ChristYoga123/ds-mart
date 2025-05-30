@@ -53,15 +53,16 @@ class UserLogResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(UserLog::query()->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('log')
                     ->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Waktu Aktivitas')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
