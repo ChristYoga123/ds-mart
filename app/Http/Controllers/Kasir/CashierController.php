@@ -10,11 +10,17 @@ use Illuminate\Http\Request;
 use App\Models\TransaksiDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CashierController extends Controller
 {
     public function index(Request $request)
     {
+        if(!Auth::user()->hasRole('kasir'))
+        {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini');
+        }
+
         if ($request->ajax()) {
             $data = Produk::withSum('produkBatches', 'stok_pcs_tersedia');
             return datatables()
@@ -49,6 +55,11 @@ class CashierController extends Controller
 
     public function bayar(Request $request)
     {
+        if(!Auth::user()->hasRole('kasir'))
+        {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini');
+        }
+
         try {
             DB::beginTransaction();
 
