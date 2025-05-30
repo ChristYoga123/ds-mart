@@ -57,8 +57,7 @@ class UserLogResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('log')
-                    ->wrap()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
