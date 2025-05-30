@@ -47,7 +47,7 @@ class ProdukMutasiPage extends Page implements HasTable
                 ->form([
                     Select::make('produk_batch_id')
                         ->label('Kode Batch (Jika opsi tidak ada, klik tombol + untuk membuat batch baru)')
-                        ->relationship('produkBatch', 'kode_batch', fn($query) => $query->whereProdukId($this->record->id))
+                        ->relationship('produkBatch', 'kode_batch', fn($query) => $query->whereProdukId($this->record->id)->latest())
                         ->getOptionLabelFromRecordUsing(fn(ProdukBatch $record) => "[$record->kode_batch] " . $record->produk->nama . ' - Rp' . number_format($record->harga_beli_per_pcs, 0, ',', '.'))
                         ->required()
                         ->searchable()
