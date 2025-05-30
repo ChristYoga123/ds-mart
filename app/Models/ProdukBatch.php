@@ -8,7 +8,7 @@ class ProdukBatch extends Model
 {
     public function setKodeBatchAttribute($value)
     {
-        $this->attributes['kode_batch'] = $this->attributes['kode_batch'] ?? 'BATCH-' . now()->format('YmdHis');
+        $this->attributes['kode_batch'] = $value ?? 'BATCH-' . now()->format('YmdHis');
     }
 
     public function produk()
