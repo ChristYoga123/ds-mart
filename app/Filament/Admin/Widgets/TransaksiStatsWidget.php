@@ -20,13 +20,23 @@ class TransaksiStatsWidget extends BaseWidget
 
         // Hitung pendapatan hari ini
         $pendapatanHariIni = Transaksi::whereDate('created_at', Carbon::today())
-            ->sum('total_bayar');
+            ->get()
+            ->sum(function ($transaksi) {
+                return $transaksi->details->sum(function ($detail) {
+                    return $detail->harga_jual_per_pcs * $detail->jumlah;
+                });
+            });
 
         // Hitung pendapatan periode
         $pendapatanPeriode = Transaksi::query()
             ->when($startDate, fn (Builder $query) => $query->whereDate('created_at', '>=', $startDate))
             ->when($endDate, fn (Builder $query) => $query->whereDate('created_at', '<=', $endDate))
-            ->sum('total_bayar');
+            ->get()
+            ->sum(function ($transaksi) {
+                return $transaksi->details->sum(function ($detail) {
+                    return $detail->harga_jual_per_pcs * $detail->jumlah;
+                });
+            });
 
         // Hitung laba periode
         $laba = Transaksi::query()
