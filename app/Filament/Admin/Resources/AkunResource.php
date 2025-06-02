@@ -28,14 +28,9 @@ class AkunResource extends Resource
                 Forms\Components\Grid::make(1)
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Nama Pengguna')
+                            ->label('Username')
                             ->required()
                             ->unique(ignoreRecord: true)
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
-                            ->email()
-                            ->unique(ignoreRecord: true)
-                            ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('password')
                             ->required()
@@ -65,6 +60,7 @@ class AkunResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
+                    ->getStateUsing(fn(User $user) => $user->email ?? '-')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Role')
