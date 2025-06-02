@@ -4,10 +4,11 @@ namespace App\Filament\Admin\Widgets;
 
 use Carbon\Carbon;
 use App\Models\Transaksi;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use App\Models\ProdukBatch;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class TransaksiStatsWidget extends BaseWidget
 {
@@ -52,14 +53,25 @@ class TransaksiStatsWidget extends BaseWidget
             });
 
         // Hitung pengeluaran kulakan periode
-        $pengeluaranKulakan = Transaksi::query()
+        $pengeluaranKulakan = ProdukBatch::query()
             ->when($startDate, fn (Builder $query) => $query->whereDate('created_at', '>=', $startDate))
             ->when($endDate, fn (Builder $query) => $query->whereDate('created_at', '<=', $endDate))
+            ->with(['mutasis' => function ($query) {
+                // Get all mutations except sales transactions
+                $query->where('keterangan', 'not like', '%Penjualan%');
+            }])
             ->get()
-            ->sum(function ($transaksi) {
-                return $transaksi->details->sum(function ($detail) {
-                    return $detail->produkBatch->harga_beli_per_pcs * $detail->jumlah;
-                });
+            ->sum(function ($produkBatch) {
+                // Calculate total stock considering all non-sales mutations
+                $totalStok = $produkBatch->mutasis
+                    ->where('jenis_mutasi', 'masuk')
+                    ->sum('jumlah_mutasi')
+                    -
+                    $produkBatch->mutasis
+                    ->where('jenis_mutasi', 'keluar')
+                    ->sum('jumlah_mutasi');
+                
+                return $produkBatch->harga_beli_per_pcs * $totalStok;
             });
 
         // Hitung tabungan (10% dari omset kotor)

@@ -15,4 +15,9 @@ class ProdukBatch extends Model
     {
         return $this->belongsTo(Produk::class);
     }
+
+    public function mutasis()
+    {
+        return $this->hasMany(ProdukMutasi::class);
+    }
 }

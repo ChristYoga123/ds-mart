@@ -2,7 +2,10 @@
 
 namespace App\Filament\Gudang\Resources\ProdukResource\Pages;
 
+use Closure;
+use App\Models\Produk;
 use App\Models\UserLog;
+use Filament\Forms\Get;
 use Filament\Tables\Table;
 use App\Models\ProdukBatch;
 use App\Models\ProdukMutasi;
@@ -14,6 +17,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Contracts\Support\Htmlable;
@@ -80,6 +84,20 @@ class ProdukMutasiPage extends Page implements HasTable
                     TextInput::make('jumlah_mutasi')
                         ->label('Jumlah Mutasi')
                         ->suffix('pcs')
+                        ->rule(static function(Get $get, Component $component) {
+                            return static function(string $attribute, $value, Closure $fail) use ($get, $component) {
+                                $produkBatch = $get('produk_batch_id');
+                                $produkBatch = ProdukBatch::find($produkBatch);
+                                
+                                if($get('jenis_mutasi') == 'keluar') {
+                                    if($produkBatch->stok_pcs_tersedia < $get('jumlah_mutasi')) {
+                                        $fail('Jumlah mutasi keluar tidak boleh lebih besar dari stok pcs tersedia produk ' . $produkBatch->produk->nama . ' dengan stok pcs tersedia ' . $produkBatch->stok_pcs_tersedia . ' pcs');
+                                    }
+                                }
+
+                                return true;
+                            };
+                        })
                         ->required(),
                     Textarea::make('keterangan')
                         ->label('Keterangan')
