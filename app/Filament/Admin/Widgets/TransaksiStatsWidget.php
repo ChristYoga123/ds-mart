@@ -69,6 +69,7 @@ class TransaksiStatsWidget extends BaseWidget
                     -
                     $produkBatch->mutasis
                     ->where('jenis_mutasi', 'keluar')
+                    ->where('is_expired', false)
                     ->sum('jumlah_mutasi');
                 
                 return $produkBatch->harga_beli_per_pcs * $totalStok;
@@ -79,6 +80,17 @@ class TransaksiStatsWidget extends BaseWidget
 
         // Hitung laba bersih
         $labaBersih = $laba - $tabungan;
+
+        // Hitung Total Nilai Harga Beli Produk yang terjual
+        $totalHargaBeli = Transaksi::query()
+            ->when($startDate, fn (Builder $query) => $query->whereDate('created_at', '>=', $startDate))
+            ->when($endDate, fn (Builder $query) => $query->whereDate('created_at', '<=', $endDate))
+            ->get()
+            ->sum(function ($transaksi) {
+                return $transaksi->details->sum(function ($detail) {
+                    return $detail->produkBatch->harga_beli_per_pcs * $detail->jumlah;
+                });
+            });
 
         return [
             Stat::make('Pendapatan Hari Ini', 'Rp ' . number_format($pendapatanHariIni, 0, ',', '.'))
@@ -110,6 +122,11 @@ class TransaksiStatsWidget extends BaseWidget
                 ->description('Laba setelah dikurangi tabungan')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
+
+            Stat::make('Total Harga Beli Produk Terjual', 'Rp ' . number_format($totalHargaBeli, 0, ',', '.'))
+                ->description('Total modal produk yang terjual')
+                ->descriptionIcon('heroicon-m-shopping-cart')
+                ->color('info'),
         ];
     }
 }

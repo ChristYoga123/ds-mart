@@ -6,6 +6,7 @@ use Closure;
 use App\Models\Produk;
 use App\Models\UserLog;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Tables\Table;
 use App\Models\ProdukBatch;
 use App\Models\ProdukMutasi;
@@ -14,6 +15,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -80,7 +82,18 @@ class ProdukMutasiPage extends Page implements HasTable
                             'masuk' => 'Masuk',
                             'keluar' => 'Keluar',
                         ])
+                        ->live()
+                        ->afterStateUpdated(function ($state, Set $set) {
+                            if ($state === 'masuk') {
+                                $set('is_expired', false);
+                            }
+                        })
                         ->required(),
+                    Checkbox::make('is_expired')
+                        ->default(false)
+                        ->label('Apakah mutasi tidak mempengaruhi modal? (Ex. expired, dsb.)')
+                        ->live()
+                        ->visible(fn(Get $get) => $get('jenis_mutasi') === 'keluar'),
                     TextInput::make('jumlah_mutasi')
                         ->label('Jumlah Mutasi')
                         ->suffix('pcs')
@@ -133,6 +146,11 @@ class ProdukMutasiPage extends Page implements HasTable
                     ->suffix('pcs')
                     ->weight(FontWeight::Bold)
                     ->sortable(),
+                TextColumn::make('is_expired')
+                    ->badge()
+                    ->label('Status Expiry')
+                    ->getStateUsing(fn(ProdukMutasi $record) => $record->is_expired ? 'Expired' : '-')
+                    ->color(fn(ProdukMutasi $record) => $record->is_expired ? 'danger' : 'warning'),
                 TextColumn::make('keterangan')
                     ->wrap(),
             ]);
